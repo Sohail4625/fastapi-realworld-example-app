@@ -15,7 +15,7 @@ def get_application() -> FastAPI:
     settings = get_app_settings()
 
     settings.configure_logging()
-
+    settings.configure_tracing()
     application = FastAPI(**settings.fastapi_kwargs)
 
     application.add_middleware(
