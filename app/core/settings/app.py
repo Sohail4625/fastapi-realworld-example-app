@@ -5,7 +5,13 @@ import structlog
 from pydantic import PostgresDsn, SecretStr
 
 from app.core.settings.base import BaseAppSettings
-
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+from opentelemetry.sdk.resources import Resource
 
 class AppSettings(BaseAppSettings):
     debug: bool = False
@@ -58,3 +64,25 @@ class AppSettings(BaseAppSettings):
             wrapper_class=structlog.stdlib.BoundLogger,
             cache_logger_on_first_use=True
         )
+    def configure_tracing(self) -> None:
+        # Set the global tracer provider
+        resource = Resource(attributes={
+        "service.name": "fastapi-realworld-app",  # Set the service name
+        })
+    
+        trace.set_tracer_provider(
+            TracerProvider(resource=resource)
+        )
+
+        # Set up Jaeger exporter for tracing
+        jaeger_exporter = JaegerExporter(
+            agent_host_name="localhost",  # Replace with your Jaeger agent host
+            agent_port=6831,              # Default Jaeger agent port
+        )
+
+        # Add the BatchSpanProcessor to the tracer provider
+        trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(jaeger_exporter))
+
+        # Automatically instrument FastAPI and SQLAlchemy
+        FastAPIInstrumentor().instrument()
+        SQLAlchemyInstrumentor().instrument()
