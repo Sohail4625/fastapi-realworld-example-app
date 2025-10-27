@@ -16,8 +16,10 @@ from app.resources import strings
 from app.services import jwt
 from app.services.authentication import check_email_is_taken, check_username_is_taken
 
-router = APIRouter()
+from prometheus_client import Counter
 
+router = APIRouter()
+users_registered_total = Counter("users_registered_total", "A counter which counts total users registered")
 
 @router.post("/login", response_model=UserInResponse, name="auth:login")
 async def login(
@@ -77,7 +79,7 @@ async def register(
         )
 
     user = await users_repo.create_user(**user_create.dict())
-
+    users_registered_total.inc()
     token = jwt.create_access_token_for_user(
         user,
         str(settings.secret_key.get_secret_value()),

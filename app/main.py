@@ -9,6 +9,7 @@ from app.api.routes.api import router as api_router
 from app.core.config import get_app_settings
 from app.core.events import create_start_app_handler, create_stop_app_handler
 
+from prometheus_fastapi_instrumentator import Instrumentator
 
 def get_application() -> FastAPI:
     settings = get_app_settings()
@@ -41,5 +42,6 @@ def get_application() -> FastAPI:
 
     return application
 
-
+instrumentator = Instrumentator()
 app = get_application()
+instrumentator.instrument(app).expose(app)
