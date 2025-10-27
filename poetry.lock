@@ -2102,6 +2102,24 @@ files = [
 ]
 
 [[package]]
+name = "structlog"
+version = "22.3.0"
+description = "Structured Logging for Python"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "structlog-22.3.0-py3-none-any.whl", hash = "sha256:b403f344f902b220648fa9f286a23c0cc5439a5844d271fec40562dbadbc70ad"},
+    {file = "structlog-22.3.0.tar.gz", hash = "sha256:e7509391f215e4afb88b1b80fa3ea074be57a5a17d794bd436a5c949da023333"},
+]
+
+[package.extras]
+dev = ["structlog[docs,tests,typing]"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-mermaid", "twisted"]
+tests = ["coverage[toml]", "freezegun (>=0.2.8)", "pretend", "pytest (>=6.0)", "pytest-asyncio (>=0.17)", "simplejson"]
+typing = ["mypy", "rich", "twisted"]
+
+[[package]]
 name = "text-unidecode"
 version = "1.3"
 description = "The most basic Text::Unidecode port"
@@ -2261,4 +2279,4 @@ dev = ["black (>=19.3b0) ; python_version >= \"3.6\"", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "304532b59616b9f90d4a2c5c3b49f2c3e1b4528bec6a7b4491e8010af64cd821"
+content-hash = "1f65accf4497efc8f78576d320f008b7674fe01acdbe4efb98d5a04fac4f7157"
