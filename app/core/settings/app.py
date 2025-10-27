@@ -1,11 +1,9 @@
 import logging
 import sys
 from typing import Any, Dict, List, Tuple
-
-from loguru import logger
+import structlog
 from pydantic import PostgresDsn, SecretStr
 
-from app.core.logging import InterceptHandler
 from app.core.settings.base import BaseAppSettings
 
 
@@ -49,9 +47,14 @@ class AppSettings(BaseAppSettings):
         }
 
     def configure_logging(self) -> None:
-        logging.getLogger().handlers = [InterceptHandler()]
-        for logger_name in self.loggers:
-            logging_logger = logging.getLogger(logger_name)
-            logging_logger.handlers = [InterceptHandler(level=self.logging_level)]
-
-        logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])
+        logging.basicConfig(level=logging.INFO, stream=sys.stdout, format="%(message)s")
+        structlog.configure(
+            processors=[
+                structlog.processors.TimeStamper(fmt="%Y-%m-%dT%H:%M:%S%z"),
+                structlog.processors.JSONRenderer()
+            ],
+            context_class=dict,
+            logger_factory=structlog.stdlib.LoggerFactory(),
+            wrapper_class=structlog.stdlib.BoundLogger,
+            cache_logger_on_first_use=True
+        )

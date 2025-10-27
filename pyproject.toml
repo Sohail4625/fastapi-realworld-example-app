@@ -28,6 +28,7 @@ loguru = "^0.6.0"
 setuptools = "^65.0"  # Adjust the version as needed
 prometheus-fastapi-instrumentator = "^6.0.0"
 prometheus-client = "^0.20.0"
+structlog = "^22.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"

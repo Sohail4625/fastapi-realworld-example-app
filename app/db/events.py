@@ -1,12 +1,13 @@
 import asyncpg
 from fastapi import FastAPI
-from loguru import logger
-
+import structlog
 from app.core.settings.app import AppSettings
 
 
+log = structlog.get_logger()
+
 async def connect_to_db(app: FastAPI, settings: AppSettings) -> None:
-    logger.info("Connecting to PostgreSQL")
+    log.info("Connecting to PostgreSQL")
 
     app.state.pool = await asyncpg.create_pool(
         str(settings.database_url),
@@ -14,12 +15,12 @@ async def connect_to_db(app: FastAPI, settings: AppSettings) -> None:
         max_size=settings.max_connection_count,
     )
 
-    logger.info("Connection established")
+    log.info("Connection established")
 
 
 async def close_db_connection(app: FastAPI) -> None:
-    logger.info("Closing connection to database")
+    log.info("Closing connection to database")
 
     await app.state.pool.close()
 
-    logger.info("Connection closed")
+    log.info("Connection closed")
